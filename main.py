@@ -8,31 +8,41 @@ class Timestamp(ctk.CTk):
         self.title("Timestamp Forensics Tool")
         self.geometry("700x500")
 
-        # Create a wider frame on the left side
-        self.left_frame = ctk.CTkFrame(self, width=200)
+        # Create a narrower frame on the left side
+        self.left_frame = ctk.CTkFrame(self, width=150, height=500)  # Reduced width
         self.left_frame.pack(side="left", fill="y", padx=10, pady=10)
+        self.left_frame.pack_propagate(False)  # Prevent the frame from resizing to fit its contents
+
+        # Select File button at the top
+        self.file = ctk.CTkButton(self.left_frame, text="Select File", command=self.selectFile)
+        self.file.pack(pady=(10, 5), anchor="n")  # Align button to the top (north)
+
+        # Create a frame to center the icon and label
+        self.center_frame = ctk.CTkFrame(self.left_frame, fg_color="transparent")
+        self.center_frame.pack(expand=True)  # Center frame within left_frame
 
         # Initial icon for no file selected
         self.icon_image = ctk.CTkImage(Image.open("empty_file.png"), size=(50, 50))  # Initial icon
-        self.icon_label = ctk.CTkLabel(self.left_frame, image=self.icon_image, text="")  # Empty text
+        self.icon_label = ctk.CTkLabel(self.center_frame, image=self.icon_image, text="")  # Empty text
         self.icon_label.pack(pady=(10, 5))
 
         # Add a label to display the selected file name
-        self.file_name_label = ctk.CTkLabel(self.left_frame, text="No file selected")
+        self.file_name_label = ctk.CTkLabel(self.center_frame, text="No file selected")
         self.file_name_label.pack(pady=(5, 10))  # Adjust padding
 
-        # Select FIle button
-        self.file = ctk.CTkButton(self.left_frame, text="Select File", command=self.selectFile)
-        self.file.pack(pady=10)  # Increase padding to move it further down
-
-        # Add a button to scan the file, with padding from the bottom
-        self.scan = ctk.CTkButton(self.left_frame, text="Scan File", command=self.scanFile)
-        self.scan.pack(side="bottom", pady=(0, 10))
+        # Add a button to remove the file, positioned at the bottom
+        self.remove_file_button = ctk.CTkButton(self.left_frame, text="Remove File", command=self.removeFile)
+        self.remove_file_button.pack(side="bottom", pady=10)
 
         # Create a list box on the right side
-        self.properties_listbox = ctk.CTkTextbox(self, width=200, height=500)
-        self.properties_listbox.pack(side="right", fill="both", expand=True, padx=10, pady=10)
+        self.properties_listbox = ctk.CTkTextbox(self, width=200, height=400)  # Made the height shorter
+        self.properties_listbox.pack(side="top", fill="both", expand=True, padx=10, pady=(10, 10))  # Added padding at bottom
+
         self.properties_listbox.configure(state="disabled")  # Make the textbox non-editable
+
+        # Add a Scan File button below the list box on the right side
+        self.scan = ctk.CTkButton(self, text="Scan File", command=self.scanFile, height=40)  # Set a taller height
+        self.scan.pack(side="bottom", pady=(0, 20), padx=10, fill="x")  # Added more padding at top
 
         self.selected_file = None  # Variable to store the selected file path
 
@@ -56,6 +66,23 @@ class Timestamp(ctk.CTk):
             print(f"Scanning File: {self.selected_file}")
         else:
             print("No file selected for scanning.")
+
+    def removeFile(self):
+        if self.selected_file:
+            self.selected_file = None
+            self.file_name_label.configure(text="No file selected")
+            
+            # Reset the icon to the initial state
+            self.icon_image = ctk.CTkImage(Image.open("empty_file.png"), size=(50, 50))
+            self.icon_label.configure(image=self.icon_image)  # Reset the icon image
+            
+            # Clear the properties listbox
+            self.properties_listbox.configure(state="normal")
+            self.properties_listbox.delete(1.0, ctk.END)
+            self.properties_listbox.configure(state="disabled")
+            print("File removed.")
+        else:
+            print("No file to remove.")
 
     def updatePropertiesList(self):
         # This is where you would add text to the listbox
