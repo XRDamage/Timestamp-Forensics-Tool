@@ -109,7 +109,7 @@ class Timestamp(ctk.CTk):
 
             # Display Timestomp executable check results
             if timestomp_check:
-                self.properties_listbox.insert(ctk.END, "Timestomp executable found on the system.\n")
+                self.properties_listbox.insert(ctk.END, "Timestomp presence found on the system.\n")
             else:
                 self.properties_listbox.insert(ctk.END, "No Timestomp executable found.\n")
 
@@ -167,7 +167,7 @@ class Timestamp(ctk.CTk):
                 for i in range(winreg.QueryInfoKey(key)[0]):
                     subkey_name = winreg.EnumKey(key, i)
                     with winreg.OpenKey(key, subkey_name) as subkey:
-                        try:
+                        try: 
                             display_name = winreg.QueryValueEx(subkey, "DisplayName")[0]
                             if "Timestomp" in display_name:
                                 entries_found.append(display_name)
